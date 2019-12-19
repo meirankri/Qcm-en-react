@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Damier React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- permet de compiler le JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+       select{
+        width: 30% !important;
+       }
+        
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+function log(a) {console.log(a)}
+
+class Wrapper extends React.Component {
+
+    render(){
+        return (
+            <div className={"m-5"}>
+                <h1 className={"h1 text-primary"}>Qcm react </h1>
+                {this.props.children}
+            </div>
+        )
+    }
+}
+
+class Input extends React.Component 
+{
+    constructor(props) {
+        super(props);
+        this.state = { 
+            
+        };
+    }
+    
+    render() {
+        return (
+            <React.Fragment>
+            <div>
+                <label>
+                    <input 
+                    className={this.props.class} name={this.props.name} type={this.props.typeInput} value={this.props.val} />
+                    {this.props.label}
+                </label>
+            </div>
+            </React.Fragment>
+        )
+    }
+  
+}
+class Select extends React.Component 
+{
+    constructor(props) {
+        super(props);
+        this.state = { 
+            
+        };
+    }
+    
+    render() {
+        
+        return (
+            <React.Fragment>
+                <select className={this.props.class} name={this.props.name} >
+                  {this.props.children}
+               </select>
+            </React.Fragment>
+        )
+    }
+  
+}
+
+ 
+class FirstQ extends React.Component{
+    render(){
+        return (
+            <React.Fragment>
+                <h2>Q1 React est-il un framework ?</h2>
+                    <Input class={"mr-3"} typeInput={"radio"} name={"react"} val={"oui"} label={"Oui"} />
+                    <Input class={"mr-3"} typeInput={"radio"} name={"react"} val={"non"} label={"Non"} /> 
+                    <div className={"btn btn-primary"} onClick={ this.props.click}> Suivant</div>
+                    
+            </React.Fragment>
+        )
+    }
+}
+
+class SecundQ extends React.Component{
+    render(){
+        return (
+            <React.Fragment>
+                <h2>Q2 JSX c'est quoi</h2>
+                <Input class={"mr-3"} typeInput={"radio"} name={"jsx"} val={"compile"} label={"JSX est un langage compilé"} />
+                <Input class={"mr-3"} typeInput={"radio"} name={"jsx"} val={"facebook"} label={"JSX est un sur-ensemble développé par Facebook"} /> 
+                <div className={"btn btn-primary"} onClick={ this.props.click}> Suivant</div>
+            </React.Fragment>
+        )
+    }
+}
+class ThirdQ extends React.Component{
+    render(){
+        return (
+            <React.Fragment>
+                <h2> Q3 Symfony design pattern.</h2>
+                <Select class={"custom-select mb-4"}  name={"symfony"}  >
+                            <option defaultValue={""} >choix du pattern</option>
+                            <option value="mvc">MVC</option>
+                            <option value="csv">MVMH</option>
+                            <option value="mmv">MMV</option>
+
+
+                </Select> 
+                <div className={"btn btn-primary"} onClick={ this.props.click}> Suivant</div>
+            </React.Fragment>
+        )
+    }
+}
+
+class Form extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            react : '',
+            js:'',
+            error: null,
+            class : null,
+            component : [],
+            counter : 0    
+        
+
+        }
+    }
+    handleSubmit = (e) =>{
+        e.preventDefault()
+        if(e.target.react.value == "" && e.target.jsx.value == ""){
+            this.setState({message : "les champs ne sont pas entrés", class : "alert alert-danger" })
+        }else{
+            this.setState({message : 
+                "react : "+ e.target.react.value
+                + "js : " + e.target.jsx.value
+                , class : "alert alert-danger" })
+
+        }
+    }
+    next = () =>{
+        if(this.state.counter < this.state.component.length){
+            this.setState({counter : this.state.counter + 1 })
+         }        
+    }
+
+    componentDidMount(){
+        this.state.component.push(
+            <FirstQ click={() => this.next("first")} step={"first"}/> ,
+            <SecundQ click={() => this.next("secund")}  step={"secund"}/> , 
+             <ThirdQ click={() => this.next("third")}  step={"third"} />     
+        )
+        this.setState({component : this.state.component})
+    }
+    render(){
+        
+        
+ 
+        return (
+            <Wrapper>
+                
+                {this.state.message && <div className={this.state.class}> {this.state.message } </div> }
+
+                <form onSubmit={this.handleSubmit} className={"form-group"}>
+                    <div>
+                        <Input class={"mr-3"} type={"mail"} label={"Veuillez entrer votre email *"}  />
+                    </div>
+                    <div>
+                     { this.state.component[this.state.counter] }
+                    </div>
+                    
+                   <button className={"btn btn-primary"}>valider</button>
+                </form>
+            </Wrapper>
+        )
+    }
+}
+class App extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            
+        }
+     }
+     handleChange = (e) =>{
+        this.setState({value: e.target.value})
+     }
+    
+     handleSubmit = (e) =>{
+         
+        e.preventDefault()
+        
+     }
+
+     render(){
+         return (
+            <React.Fragment>
+                <Form/>
+            </React.Fragment>
+         )
+     }
+
+
+}
+
+
+// Rendu dans le DOM de deux components hiérarchiques
+ReactDOM.render(
+  // la syntaxe des composants est déclarative comme du HTML
+  // name est un attribut de Hello en React cela s'appelle est props qu'on passe au composant
+  <App  />,
+  document.getElementById('root')  
+);
+</script>
+</body>
+
+</html>
